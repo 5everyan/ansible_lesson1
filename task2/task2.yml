@@ -1,0 +1,29 @@
+---
+- name: remove Apache
+  hosts: nodes
+  vars:
+    apache_package: httpd
+    firewall_package: firewalld
+    web_service: httpd
+    firewall_service: firewalld
+    rule: http
+    
+  tasks:
+    - name: remove Apache
+      yum:
+        name:
+          - "{{ apache_package }}"
+        state: absent
+     
+    - name: delete web content
+      file:
+        state: absent
+        path: /var/www/html/index.html
+        
+    - name: close firewall for {{ rule }}
+      firewalld:
+        service: "{{ rule }}"
+        permanent: true
+        immediate: true
+        state: disabled
+...
