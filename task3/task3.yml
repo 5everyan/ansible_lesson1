@@ -1,0 +1,25 @@
+---
+- name: changing grub
+  hosts: nodes
+      
+  tasks:
+    - name: checking net.ifnames=0
+      lineinfile:
+        state: present
+        dest: /etc/default/grub
+        backrefs: yes
+        regexp: '^(GRUB_CMDLINE_LINUX=(?!.* net.ifnames)\"[^\"]+)(\".*)'
+        line: '\1 net.ifnames=0\2'
+     
+    - name: checking biosdevname=0
+      lineinfile:
+        state: present
+        dest: /etc/default/grub
+        backrefs: yes
+        regexp: '^(GRUB_CMDLINE_LINUX=(?!.* biosdevname)\"[^\"]+)(\".*)'
+        line: '\1 biosdevname=0\2'
+
+    - name: saving changes
+      command:
+        cmd: grub2-mkconfig -o /boot/grub2/grub.cfg
+...
